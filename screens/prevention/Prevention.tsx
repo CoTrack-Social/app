@@ -7,7 +7,6 @@ import {
 import Layout from '../../constants/Layout';
 import { PreventionItem, PreventionStackNavProps } from './types';
 import { SharedElement } from 'react-navigation-shared-element';
-import i18n from 'i18n-js';
 
 import * as Localization from 'expo-localization';
 import i18n from 'i18n-js';
@@ -21,64 +20,50 @@ const data: PreventionItem[] = [
   {
     id: '1',
     title: i18n.t('Prevention_Item_1_Title'),
-    shortText:
-      i18n.t('Prevention_Item_1_shortText'),
-    longText:
-      i18n.t('Prevention_Item_1_longText'),
+    shortText: i18n.t('Prevention_Item_1_shortText'),
+    longText: i18n.t('Prevention_Item_1_longText'),
     image: require('../../assets/images/prevention/coronavirus.png'),
   },
   {
-    id: '2',    
+    id: '2',
     title: i18n.t('Prevention_Item_2_Title'),
-    shortText:
-      i18n.t('Prevention_Item_2_shortText'),
-    longText:
-      i18n.t('Prevention_Item_2_longText'),
+    shortText: i18n.t('Prevention_Item_2_shortText'),
+    longText: i18n.t('Prevention_Item_2_longText'),
     image: require('../../assets/images/prevention/fever.png'),
   },
   {
     id: '3',
     title: i18n.t('Prevention_Item_3_Title'),
-    shortText:
-    i18n.t('Prevention_Item_3_shortText'),
-    longText:
-    i18n.t('Prevention_Item_3_longText'),
+    shortText: i18n.t('Prevention_Item_3_shortText'),
+    longText: i18n.t('Prevention_Item_3_longText'),
     image: require('../../assets/images/prevention/spread.png'),
   },
   {
     id: '4',
     title: i18n.t('Prevention_Item_4_Title'),
-    shortText:
-    i18n.t('Prevention_Item_4_shortText'),
-    longText:
-    i18n.t('Prevention_Item_4_longText'),
+    shortText: i18n.t('Prevention_Item_4_shortText'),
+    longText: i18n.t('Prevention_Item_4_longText'),
     image: require('../../assets/images/prevention/transmission.png'),
   },
   {
     id: '5',
     title: i18n.t('Prevention_Item_5_Title'),
-    shortText:
-    i18n.t('Prevention_Item_5_shortText'),
-    longText:
-    i18n.t('Prevention_Item_5_longText'),
+    shortText: i18n.t('Prevention_Item_5_shortText'),
+    longText: i18n.t('Prevention_Item_5_longText'),
     image: require('../../assets/images/prevention/hygiene.png'),
   },
   {
     id: '6',
     title: i18n.t('Prevention_Item_6_Title'),
-    shortText:
-    i18n.t('Prevention_Item_6_shortText'),
-    longText:
-    i18n.t('Prevention_Item_6_longText'),
+    shortText: i18n.t('Prevention_Item_6_shortText'),
+    longText: i18n.t('Prevention_Item_6_longText'),
     image: require('../../assets/images/prevention/travel.png'),
   },
   {
     id: '7',
     title: i18n.t('Prevention_Item_7_Title'),
-    shortText:
-    i18n.t('Prevention_Item_7_shortText'),
-    longText:
-    i18n.t('Prevention_Item_7_longText'),
+    shortText: i18n.t('Prevention_Item_7_shortText'),
+    longText: i18n.t('Prevention_Item_7_longText'),
     image: require('../../assets/images/prevention/quarantine.png'),
   },
 ];
