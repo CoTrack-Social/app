@@ -2,12 +2,12 @@ import React, { useReducer, useCallback, useEffect, useState } from 'react';
 import {
   StyleSheet,
   TextInput,
-  Text,
   View,
   Platform,
   ScrollView,
   StatusBar,
   Picker,
+  Alert,
 } from 'react-native';
 import { useScrollToTop } from '@react-navigation/native';
 import * as Location from 'expo-location';
@@ -16,12 +16,18 @@ import { QuestResults } from './types';
 import Colors from '../../constants/Colors';
 import { formatAge } from '../../utils/forms';
 import Touchable from '../../components/Touchable';
+import { getPreferences } from '../../utils/config';
 import { saveDiagnosticLocally } from '../../utils/localStorageHelper';
 import { syncRecordsDataWithServer } from '../../utils/syncStorageHelper';
 import i18n from 'i18n-js';
+import { Text, Button, Divider } from 'react-native-elements';
+import Icon from 'react-native-vector-icons/MaterialIcons'
+import symbolicateStackTrace from 'react-native/Libraries/Core/Devtools/symbolicateStackTrace';
 
 const initialState = {
   age: '',
+  height: '',
+  weight: '',
   symptoms: {},
   questions: {},
   medicalHistory: {},
@@ -29,6 +35,40 @@ const initialState = {
 
 function reducer(state, newState) {
   return { ...state, ...newState };
+}
+
+function BMIDisplay({height, weight}) {
+  const h = parseFloat(height)/100; // altura en metros
+  const w = parseFloat(weight);
+
+  const bmi = Math.floor(w/(h*h));  // peso sobre altura al cuadrado
+  
+  const [iconcolor, text, iconname] = (function(bmi)  {
+    if(isNaN(bmi)) return ['white',i18n.t('BMI_1'),'info'];
+    if(bmi < 16) return ['#F2453E',i18n.t('BMI_2'), 'warning'];
+    if(bmi < 17) return ['#FF9700',i18n.t('BMI_3'), 'done'];
+    if(bmi < 18.5) return ['#FEE94E',i18n.t('BMI_4'), 'done'];
+    if(bmi < 25) return ['#00C16E',i18n.t('BMI_5'), 'done'];
+    if(bmi < 30) return ['#FEE94E',i18n.t('BMI_6'), 'report'];
+    if(bmi < 35) return ['#FF9700',i18n.t('BMI_7'), 'report'];
+    if(bmi < 40) return ['#F2453E',i18n.t('BMI_8'), 'report'];
+    return ['#BF3930',i18n.t('BMI_9'), 'report'];
+  })(bmi);
+
+  
+  return (
+    <Button
+    icon={{
+      name: iconname,
+      size: 30,
+      color: iconcolor,
+    }}
+      title={text}
+      size={20}
+      type="outline"
+      disabled
+    />
+  );
 }
 
 function QuestButton({ id, text, onPress, selected }) {
@@ -88,9 +128,42 @@ function YesNoButtons({ id, onPress, state }) {
   );
 }
 
-function TempPicker({ onChange, value }) {
-  let defaultValue = { temp1: 37, temp2: 5 };
+class TPicker extends React.Component {
+  constructor(props) {
+    super(props);
+    this.handleChange = this.handleChange.bind(this);
+  }
 
+  handleChange=(value, index)=>{
+    this.setState({temperature: value}, () => Alert.alert(this.state.temperature))
+  }
+  state = {temperature: '37.5'};
+  render() {
+
+    const arrItems = Array.from(Array(100).keys()).map((e, i) => (
+      <Picker.Item key={(i + 340)/10} label={`${(i + 340)/10}`} value={(i + 340)/10} />
+    ));
+
+    return (
+      <Picker
+      selectedValue={this.state.temperature}
+      onValueChange={this.handleChange}
+      style={{
+        width: '25%',
+        marginLeft: 'auto',
+      }}
+      mode="dropdown"
+    >
+      {arrItems}
+    </Picker>
+    )
+  }
+}
+
+
+function TempPicker({onChange, value }) {
+  let defaultValue = { temp1: 37, temp2: 5 };
+  
   if (value) {
     try {
       const v = value.split('.');
@@ -104,6 +177,7 @@ function TempPicker({ onChange, value }) {
     internalValue[key] = val;
     setInternalValue(internalValue);
     onChange(`${internalValue.temp1}.${internalValue.temp2}`);
+
   };
 
   const arrTemp1 = Array.from(Array(10).keys()).map((e, i) => (
@@ -124,7 +198,6 @@ function TempPicker({ onChange, value }) {
   return (
     <View style={styles.buttonContainer}>
       <Picker
-        // id="day"
         selectedValue={internalValue.temp1}
         onValueChange={handleChange('temp1')}
         style={{
@@ -137,7 +210,6 @@ function TempPicker({ onChange, value }) {
       </Picker>
       <Text>.</Text>
       <Picker
-        // id="month"
         selectedValue={internalValue.temp2}
         onValueChange={handleChange('temp2')}
         style={{ width: '20%' }}
@@ -184,6 +256,18 @@ function Questionary({ onShowResults }: QuestionaryProps) {
   const handleChangeAge = (age) => {
     setState({ age: formatAge(age) });
   };
+  const handleChangeWeight = (val) => {
+    val.replace(/\D/g, '');
+    if(val < 0) val = 0;
+    if(val > 250 ) val = 250;
+    setState({ weight: val });
+  };
+  const handleChangeHeight = (val) => {
+    val.replace(/\D/g, '');
+    if(val < 0) val = 0;
+    if(val > 250 ) return;
+    setState({ height: val });
+  };
 
   useEffect(() => {
     const hasAnswers = Object.keys(state.questions);
@@ -197,6 +281,7 @@ function Questionary({ onShowResults }: QuestionaryProps) {
     setDisabled(!(hasAnswers.length >= 3));
     setPositiveTravelContact(!!hasPositiveAnswers);
     setpositiveExtraConditions(!!hasPositiveConditions);
+
   }, [state]);
 
   const handleShowResults = (result) => {
@@ -207,30 +292,35 @@ function Questionary({ onShowResults }: QuestionaryProps) {
   const handlePress = async () => {
     let result: QuestResults;
 
-    function hasExtraConditions() {
-      if (parseInt(state.age) >= 60 || positiveExtraConditions) {
-        result = 'negative';
-      } else {
-        result = 'neutral';
-      }
-    }
-
-    if (state.symptoms['fever'] === 'yes' && positiveTravelContact) {
-      if (
-        state.symptoms['cough'] === 'yes' ||
-        state.symptoms['throat'] === 'yes' ||
-        state.symptoms['breath'] === 'yes'
-      ) {
-        if (state.symptoms['breath'] === 'yes') {
+    // Fiebre 37.5+ Y
+    // Uno de (tos,odinofagia: dolor al tragar,dificultad respitatoria,anosmia/disguesia: falta de olfato/sabor)
+    // y en ultimos 14 días historial de viaje/contacto o residencia en zona de transmision local
+    result = 'positive';
+    if(state.symptoms['fever'] === 'yes')
+    {
+      // Triage Italia
+      /*
+      if(state.temperature === undefined || state.temperature > 37.5) {
+        if( positiveTravelContact ) {
           result = 'negative';
-        } else {
-          hasExtraConditions();
         }
-      } else {
-        result = 'positive';
       }
-    } else {
-      result = 'positive';
+      */
+
+      // state.temperature === undefined = 37.5, bug en TempPicker
+      if(state.temperature === undefined || state.temperature > 37.5) {
+        if( (state.symptoms['throat'] === 'yes' || 
+            state.symptoms['breath'] === 'yes' ||
+            state.symptoms['anosmya'] === 'yes' ||
+            state.symptoms['cough'] === 'yes')
+            &&
+            (
+              positiveTravelContact
+            ) 
+          ) {
+          result = 'negative';
+        }
+      }
     }
 
     let location;
@@ -263,15 +353,11 @@ function Questionary({ onShowResults }: QuestionaryProps) {
         ref={scrollRef}
       >
         <Text style={styles.title}>
-          Si tenés algún malestar y pensás que puede estar ligado al contagio de
-          coronavirus, podemos realizar un{' '}
-          <Text style={{ fontWeight: '700' }}>
-            auto-evaluación de detección temprana
-          </Text>{' '}
-          respondiendo una serie de preguntas, detallando los síntomas que estás
-          teniendo y si creés haber estado en contacto con alguien infectado.
+        {i18n.t('AutoTest_Intro')}
         </Text>
-        <Text style={styles.section}>Edad</Text>
+        <Text>{' '}</Text>
+        <Divider/>
+        <View>
         <TextInput
           placeholder={i18n.t('AskAge')}
           value={state.age}
@@ -280,8 +366,37 @@ function Questionary({ onShowResults }: QuestionaryProps) {
           style={styles.input}
           blurOnSubmit
         />
+        <View style={[(i18n.locale == 'ar') ? styles.hidden : '']}>
+        <Divider/>
+        <Text style={styles.section}>{i18n.t('BMI_title')}</Text>
+        <TextInput
+          placeholder={i18n.t('Height') + ' (CM)'}
+          value={state.height}
+          onChangeText={handleChangeHeight}
+          keyboardType="phone-pad"
+          style={styles.input}
+          blurOnSubmit
+        />
+        <TextInput
+          placeholder={i18n.t('Weight') + ' (KG)'}
+          value={state.weight}
+          onChangeText={handleChangeWeight}
+          keyboardType="numbers-and-punctuation"
+          style={styles.input}
+          blurOnSubmit
+        />
+        <BMIDisplay height={state.height} weight={state.weight}/>
+        </View>
+        </View>
         <Text style={styles.section}>{i18n.t('symptoms_title')}</Text>
+        <Divider/>
         <View style={styles.questButtons}>
+        <QuestButton
+            id="anosmya"
+            text={i18n.t('anosmya')}
+            onPress={onSelectSymptoms}
+            selected={state.symptoms}
+          />
           <QuestButton
             id="fever"
             text={i18n.t('fever')}
@@ -332,9 +447,11 @@ function Questionary({ onShowResults }: QuestionaryProps) {
               value={state.temperature}
               onChange={(val) => setState({ temperature: val })}
             />
+            {/*<TPicker onChange={(val) => setState({ temperature: val })}/>*/}
           </>
         )}
         <Text style={styles.section}>{i18n.t('Contact_section')}</Text>
+        <Divider/>
         <Text style={styles.subtitle}>
         {i18n.t('confirmedContact_subtitle')}  
         </Text>
@@ -366,6 +483,7 @@ function Questionary({ onShowResults }: QuestionaryProps) {
           />
         </View>
         <Text style={styles.section}>{i18n.t('medicalHistory')}</Text>
+        <Divider/>
         <View style={styles.questButtons}>
           <QuestButton
             id="immunosuppression"
@@ -456,6 +574,9 @@ export default function Diagnostic({ navigation }) {
 }
 
 const styles = StyleSheet.create({
+  hidden: {
+    height: 0, width: 0, opacity: 0,
+  },
   container: {
     flex: 1,
     backgroundColor: '#fff',
@@ -471,7 +592,7 @@ const styles = StyleSheet.create({
   },
   title: { paddingTop: 20, fontSize: 16, fontWeight: '300' },
   section: {
-    paddingTop: 20,
+    paddingTop: 30,
     paddingBottom: 10,
     fontSize: 15,
     fontWeight: '700',

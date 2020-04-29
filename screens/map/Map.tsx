@@ -15,6 +15,7 @@ import { getHeatmapData, getHeatmapSocialData } from '../../api/services';
 
 import { useLocation } from '../../hooks/use-location';
 import Colors from '../../constants/Colors';
+import i18n from 'i18n-js';
 
 import { panelStyles, mapStyles } from './mapStyles';
 import {
@@ -33,26 +34,14 @@ function PanelContent() {
     <View style={panelStyles.panel}>
       <View style={{ paddingBottom: 20 }}>
         <View style={{ alignItems: 'center' }}>
-          <Text style={panelStyles.panelTitle}>RECOPILANDO INFORMACIÓN</Text>
+          <Text style={panelStyles.panelTitle}>{i18n.t('Gathering_data')}</Text>
         </View>
         <Text style={panelStyles.panelSubtitle}>
-          La aplicación se irá actualizando con los datos de ubicación y
-          recorridos de personas confirmadas con el contagio
+          {i18n.t('Gathering_data_text')}
         </Text>
       </View>
       <Text style={panelStyles.panelSubtitle}>
-        CoTrack utiliza tu ubicación para cruzar información de lugares y
-        trayectos donde hayas estado, con las ubicaciones aproximadas de otros
-        usuarios contagiados de coronavirus dentro de los últimos 14 días.
-        {`\n\n`}Las coordenadas y horarios de localización se guardan en tu
-        teléfono celular de manera encriptada. No hay ningún tipo de
-        identificación con la cual se relacione ni a vos ni a tu dispositivo
-        móvil con los datos de ubicación.{`\n\n`}La información de personas
-        infectadas es provista por entes gubernamentales y nadie más que un
-        organismo de salud puede certificar el contagio efectivo. El organismo
-        preguntará al paciente si acepta compartir su información de ubicación
-        de los últimos 14 días con motivo de ayudar a prevenir el contagio a
-        otros usuarios. Sin embargo el paciente podrá optar por no hacerlo.
+        {i18n.t('Gathering_data_longtext')}
       </Text>
     </View>
   );
@@ -253,7 +242,7 @@ export default function Map({ navigation }) {
       >
         <View style={{ flex: 1, flexDirection: 'column', justifyContent: 'center', margin: 20 }}>
           <Text style={mapStyles.modalTitle}>
-            Datos {heatmapData.isSocial ? 'Comunitarios' : 'Oficiales'}
+            {heatmapData.isSocial ? i18n.t('Heatmap_issocial') : i18n.t('Heatmap_isofficial')}
           </Text>
           <Text
             style={[
@@ -267,13 +256,13 @@ export default function Map({ navigation }) {
             ]}
           >
             {heatmapData.isSocial
-              ? 'Los datos que estás viendo ahora son datos reportados colaborativamente. No son casos confirmados, sino aquellos que presentan síntomas compatibles y no fueron aun testeados.'
-              : 'Los datos que estarás viendo son datos reportados oficialmente. Las zonas de calor no indican puntos exactos de ubicación de contagiados.'}
+              ? i18n.t('Heatmap_issocial_text')
+              : i18n.t('Heatmap_isofficial_text')}
           </Text>
           <View style={{ backgroundColor: 'white' }}>
             <TouchableOpacity onPress={() => setIsVisibleModalSocial(false)}>
               <View style={mapStyles.modalButton}>
-                <Text style={{ color: 'white' }}>Aceptar</Text>
+                <Text style={{ color: 'white' }}>{i18n.t('Accept')}</Text>
               </View>
             </TouchableOpacity>
           </View>

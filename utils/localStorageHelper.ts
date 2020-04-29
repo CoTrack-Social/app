@@ -1,6 +1,6 @@
 import { Platform, AsyncStorage } from 'react-native';
 import * as SQLite from 'expo-sqlite';
-import { SQLITE_DB_NAME, SQLITE_DB_VERSION } from './config';
+import { getPreferences, SQLITE_DB_NAME, SQLITE_DB_VERSION } from './config';
 
 const isWeb = Platform.OS === 'web';
 const db = !isWeb && SQLite.openDatabase(SQLITE_DB_NAME);
@@ -84,6 +84,18 @@ export async function saveDiagnosticLocally(
 }
 
 export async function saveLocationLocally(location) {
+
+  // No almacenar Location si la opción de rastreo GPS está desactivada
+  try {
+    const preferences = await getPreferences();
+    const userInfo = preferences.userInfo;
+    if(!userInfo || !userInfo.gps) {
+      return false;
+    }
+  } catch (error) {
+    console.log(error);
+  }
+
   if (isWeb) {
     let locations = JSON.parse(await AsyncStorage.getItem('locations')) || [];
     if (!locations.length) locations = [];

@@ -6,25 +6,40 @@ import i18n from 'i18n-js';
 export default function DatePicker({ label, onChange, value }) {
   // const dobRef = useRef<any | undefined>();
 
-  let defaultValue = {};
+  let defaultValue = { dobDay: 0, dobMonth: 0, dobYear: 0 };
 
   if (value) {
     const v = value.split('/');
     defaultValue = {
-      dobDay: v[0],
-      dobMonth: v[1],
-      dobYear: v[2],
+      dobDay: parseInt(v[0]),
+      dobMonth: parseInt(v[1]),
+      dobYear: parseInt(v[2]),
     };
   }
 
-  const [internalValue, setInternalValue] = useState(defaultValue);
+  // const [internalValue, setInternalValue] = useState(defaultValue);
+  const [internalDay, setInternalDay] = useState(defaultValue.dobDay);
+  const [internalMonth, setInternalMonth] = useState(defaultValue.dobMonth);
+  const [internalYear, setInternalYear] = useState(defaultValue.dobYear);
 
   const handleChange = (key) => (val) => {
-    internalValue[key] = val;
-    setInternalValue(internalValue);
-    onChange(
-      `${internalValue.dobDay}/${internalValue.dobMonth}/${internalValue.dobYear}`,
-    );
+    // internalValue[key] = val;
+    // setInternalValue(internalValue);
+
+    switch (key) {
+      case 'dobDay':
+        setInternalDay(val);
+        onChange(`${val}/${internalMonth}/${internalYear}`);
+        break;
+      case 'dobMonth':
+        setInternalMonth(val);
+        onChange(`${internalDay}/${val}/${internalYear}`);
+        break;
+      case 'dobYear':
+        setInternalYear(val);
+        onChange(`${internalDay}/${internalMonth}/${val}`);
+        break;
+    }
   };
 
   const arrDays = Array.from(Array(31).keys()).map((e, i) => (
@@ -43,7 +58,7 @@ export default function DatePicker({ label, onChange, value }) {
     i18n.t('September'),
     i18n.t('October'),
     i18n.t('November'),
-    i18n.t('December'),    
+    i18n.t('December'),
   ].map((e, i) => <Picker.Item key={i + 1} label={e} value={i + 1} />);
 
   const arrYears = Array.from(Array(100).keys()).map((i) => (
@@ -83,32 +98,32 @@ export default function DatePicker({ label, onChange, value }) {
           )} */}
         <Picker
           // id="day"
-          selectedValue={internalValue.dobDay}
+          selectedValue={internalDay}
           onValueChange={handleChange('dobDay')}
           style={{ width: '30%' }}
           mode="dropdown"
         >
-          <Picker.Item label="Dia" value="0" />
+          <Picker.Item label={i18n.t('Day')} value="0" />
           {arrDays}
         </Picker>
         <Picker
           // id="month"
-          selectedValue={internalValue.dobMonth}
+          selectedValue={internalMonth}
           onValueChange={handleChange('dobMonth')}
           style={{ width: '30%' }}
           mode="dropdown"
         >
-          <Picker.Item label="Mes" value="0" />
+          <Picker.Item label={i18n.t('Month')} value="0" />
           {arrMonths}
         </Picker>
         <Picker
           // id="year"
-          selectedValue={internalValue.dobYear}
+          selectedValue={internalYear}
           onValueChange={handleChange('dobYear')}
           style={{ width: '30%' }}
           mode="dropdown"
         >
-          <Picker.Item label="Año" value="0" />
+          <Picker.Item label={i18n.t('Year')} value="0" />
           {arrYears}
         </Picker>
       </View>

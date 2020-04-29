@@ -11,14 +11,18 @@ import {
 import { SplashScreen } from 'expo';
 import { Asset } from 'expo-asset';
 import * as Font from 'expo-font';
-import { Ionicons } from '@expo/vector-icons';
+// import { Ionicons } from '@expo/vector-icons';
 import Constants from 'expo-constants';
 import { NavigationContainer } from '@react-navigation/native';
 import { syncLocalDataWithServer } from './utils/syncStorageHelper';
 import { initAndUpdateDatabase } from './utils/localStorageHelper';
 
 import useLinking from './navigation/useLinking';
-import { getPreferences, UserPreferences } from './utils/config';
+import {
+  getPreferences,
+  UserPreferences,
+  clearPreferences,
+} from './utils/config';
 import MainNavigator from './navigation/MainNavigator';
 import Layout from './constants/Layout';
 
@@ -29,7 +33,8 @@ import { translations } from './assets/translations';
 // Set the key-value pairs for the different languages you want to support.
 i18n.translations = translations;
 
-i18n.locale = Localization.locale.startsWith('it') ? 'it' : 'es';
+i18n.locale = Localization.locale.startsWith('it') ? 'it' : 'ar';
+
 // Set the locale once at the beginning of your app.
 // i18n.locale = Localization.locale;
 // When a value is missing from a language it'll fallback to another language with the key present.
@@ -89,10 +94,17 @@ export default function App(props) {
         await Promise.all(cacheImages);
 
         // await clearPreferences();
-        const preferences = await getPreferences();
+        let preferences = await getPreferences();
         // setPreferences(preferences);
+        console.log('preferences init', preferences.userInfo);
+        if (!preferences.userInfo) preferences.userInfo = {};
+
+        if (!preferences.userInfo.country)
+          preferences.userInfo.country = i18n.locale;
 
         const userInfo = preferences.userInfo;
+        i18n.locale = preferences.userInfo.country;
+
         const initialRoute = preferences.showOnboarding
           ? 'Help'
           : userInfo &&

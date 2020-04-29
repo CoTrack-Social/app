@@ -9,68 +9,76 @@ import { PreventionItem, PreventionStackNavProps } from './types';
 import { SharedElement } from 'react-navigation-shared-element';
 import i18n from 'i18n-js';
 
+import * as Localization from 'expo-localization';
+import i18n from 'i18n-js';
+import { translations } from '../../assets/translations';
+
+i18n.translations = translations;
+i18n.locale = Localization.locale.startsWith('it') ? 'it' : 'ar';
+i18n.fallbacks = true;
+
 const data: PreventionItem[] = [
   {
     id: '1',
-    title: '¿Qué es el coronavirus?',
+    title: i18n.t('Prevention_Item_1_Title'),
     shortText:
-      'También llamado COVID-19, es una enfermedad infecciosa causada por un nuevo virus que no había sido detectado en humanos hasta la fecha.',
+      i18n.t('Prevention_Item_1_shortText'),
     longText:
-      'También llamado COVID-19, es una enfermedad infecciosa causada por un nuevo virus que no había sido detectado en humanos hasta la fecha.\n\nEl virus causa una complicación respiratoria como la gripe, similar a la Influenza, junto con diversos síntomas, que en casos graves pueden producir neumonía e incluso, la muerte.',
+      i18n.t('Prevention_Item_1_longText'),
     image: require('../../assets/images/prevention/coronavirus.png'),
   },
   {
-    id: '2',
-    title: '¿Cuáles son los síntomas?',
+    id: '2',    
+    title: i18n.t('Prevention_Item_2_Title'),
     shortText:
-      'Los síntomas más comunes del contagio de coronavirus son fiebre, tos y dolor de garganta.',
+      i18n.t('Prevention_Item_2_shortText'),
     longText:
-      'Los síntomas más comunes del contagio de coronavirus son fiebre, tos y dolor de garganta.\n\nEn algunos casos puede provocar dificultades respiratorias severas, requiriendo hospitalización.',
+      i18n.t('Prevention_Item_2_longText'),
     image: require('../../assets/images/prevention/fever.png'),
   },
   {
     id: '3',
-    title: '¿Cómo se propaga?',
+    title: i18n.t('Prevention_Item_3_Title'),
     shortText:
-      'La principal vía para la diseminación del virus es la exposición ante una persona infectada mediante el estornudo o tos y también por la circulación de objetos contaminados, donde el virus permanece un tiempo variable según su material.',
+    i18n.t('Prevention_Item_3_shortText'),
     longText:
-      'La principal vía para la diseminación del virus es la exposición ante una persona infectada mediante el estornudo o tos y también por la circulación de objetos contaminados, donde el virus permanece un tiempo variable según su material.\n\nEstas pequeñas partículas pueden llegar a la boca o la nariz de las personas que se encuentren en contacto o posiblemente entrar a los pulmones al respirar.',
+    i18n.t('Prevention_Item_3_longText'),
     image: require('../../assets/images/prevention/spread.png'),
   },
   {
     id: '4',
-    title: '¿Cómo podemos protegernos?',
+    title: i18n.t('Prevention_Item_4_Title'),
     shortText:
-      'La principal vía de contagio es a través de las manos, tocando un objeto contaminado y llevándose las manos a la boca y ojos.',
+    i18n.t('Prevention_Item_4_shortText'),
     longText:
-      'La principal vía de contagio es a través de las manos, tocando un objeto contaminado y llevándose las manos a la boca y ojos.\n\nEsta epidemia requiere que colaboremos con medidas simples, que apuntan a disminuir la probabilidad de contagio entre las personas.\n\nSEPARACIÓN SOCIAL: Tratá de mantener siempre una distancia mayor a 1 metro con los demás.\n\nCONTACTO CORPORAL: Evitá tocar las manos o la cara para saludar o interactuar con otras personas.\n\nAGLOMERACIONES: Evitá concurrir a lugares donde puedas estar en contacto con más de 20 personas.\n\nAUTO AISLAMIENTO: El auto aislamiento, o cuarentena voluntaria, ayuda a que el sistema de salud no colapse si en caso de contagio múltiple, se deba atender a varias personas a la vez.\n\nSi tenés síntomas de gripe quedate en tu casa, no concurras a tu trabajo o a lugares públicos. Consultá a las líneas de atención profesional para saber cómo proceder.',
+    i18n.t('Prevention_Item_4_longText'),
     image: require('../../assets/images/prevention/transmission.png'),
   },
   {
     id: '5',
-    title: '¿Cómo ayuda la higiene?',
+    title: i18n.t('Prevention_Item_5_Title'),
     shortText:
-      'Mantené la limpieza, principalmente de las superficies donde usás las manos (picaportes, canillas, teclados, asas, etc).',
+    i18n.t('Prevention_Item_5_shortText'),
     longText:
-      'Mantené la limpieza, principalmente de las superficies donde usás las manos (picaportes, canillas, teclados, asas, etc).\n\nTambién mantené tus manos limpias. Evitá tocarte la cara.\n\nCubrite con el pliegue del codo y no con las manos al estornudar.',
+    i18n.t('Prevention_Item_5_longText'),
     image: require('../../assets/images/prevention/hygiene.png'),
   },
   {
     id: '6',
-    title: '¿Cuándo es aconsejable consultar?',
+    title: i18n.t('Prevention_Item_6_Title'),
     shortText:
-      'Ante la presencia de fiebre y síntomas respiratorios como tos, dolor de garganta, dificultad para respirar y haber permanecido en áreas con circulación del virus o al haber estado en contacto con un caso confirmado o probable.',
+    i18n.t('Prevention_Item_6_shortText'),
     longText:
-      'Ante la presencia de fiebre y síntomas respiratorios como tos, dolor de garganta, dificultad para respirar y haber permanecido en áreas con circulación del virus o al haber estado en contacto con un caso confirmado o probable.\nSe insta a la población a que se comunique de inmediato con el sistema de salud, refiera el antecedente de viaje y evite el contacto social.',
+    i18n.t('Prevention_Item_6_longText'),
     image: require('../../assets/images/prevention/travel.png'),
   },
   {
     id: '7',
-    title: '¿Cuándo hacer cuarentena?',
+    title: i18n.t('Prevention_Item_7_Title'),
     shortText:
-      'Hasta el día 26/04 la cuarentena es obligatoria para todos, salvo actividades exceptuadas.',
+    i18n.t('Prevention_Item_7_shortText'),
     longText:
-      'Hasta el día 26/04 la cuarentena es obligatoria para todos, salvo actividades exceptuadas.\nPara aquellas personas exceptuadas, se recomienda mantener el distanciamiento social y extremar medidas de higiene.',
+    i18n.t('Prevention_Item_7_longText'),
     image: require('../../assets/images/prevention/quarantine.png'),
   },
 ];

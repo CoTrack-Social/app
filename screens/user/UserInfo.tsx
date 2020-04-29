@@ -23,6 +23,7 @@ import Colors from '../../constants/Colors';
 import { savePreferences, getPreferences } from '../../utils/config';
 import RadioButtons from '../../components/RadioButtons';
 import DatePicker from '../../components/DatePicker';
+import DoctorPicker from '../../components/DoctorPicker';
 import ProvincePicker from '../../components/ProvincePicker';
 import { syncUserInfoDataWithServer } from '../../utils/syncStorageHelper';
 
@@ -57,6 +58,11 @@ const UserInfo = ({ navigation }: MainStackNavProps<'UserInfo'>) => {
   }, []);
 
   const handleChange = (key) => (value) => {
+    setState({ [key]: value });
+  };
+
+  const handleChangeID = (key) => (value) => {
+    value = value.replace(/[\W_]+/g, '');
     setState({ [key]: value });
   };
 
@@ -208,9 +214,10 @@ const UserInfo = ({ navigation }: MainStackNavProps<'UserInfo'>) => {
             <Text style={styles.text}>{i18n.t('title_signup')}</Text>
 
             <ProvincePicker
-              label="Provincia"
+              label={i18n.t('Province')}
               onChange={handleChange('province')}
               value={state.province}
+              country={state.country}
             />
 
             {state.province && state.province.image ? (
@@ -229,17 +236,24 @@ const UserInfo = ({ navigation }: MainStackNavProps<'UserInfo'>) => {
                   resizeMode="contain"
                 />
                 <Text style={{ textAlign: 'center', marginTop: 5 }}>
-                  App Oficial
+                  {i18n.t('OfficialApp')}
                 </Text>
               </View>
             ) : null}
 
+            <DoctorPicker
+              label={i18n.t('Doctor')}
+              onChange={handleChange('doctor')}
+              value={state.doctor}
+              province={state.province}
+              country={state.country}
+            />
             <TextInput
-              placeholder="DNI"
+              placeholder={i18n.t('ID')}
               value={state.dni}
-              onChangeText={handleChange('dni')}
-              keyboardType="phone-pad"
+              onChangeText={handleChangeID('dni')}
               style={styles.input}
+              maxLength={16}
               blurOnSubmit
             />
             <View style={[styles.input, { borderWidth: 0 }]}>
@@ -271,12 +285,13 @@ const UserInfo = ({ navigation }: MainStackNavProps<'UserInfo'>) => {
               value={state.email}
               onChangeText={handleChange('email')}
               keyboardType="email-address"
+              autoCompleteType="email"
               style={styles.input}
               blurOnSubmit
             />
 
             <TextInput
-              placeholder="# Celular"
+              placeholder={i18n.t('Cellphone')}
               value={state.phoneNumber}
               onChangeText={handleChange('phoneNumber')}
               keyboardType="phone-pad"
@@ -292,7 +307,7 @@ const UserInfo = ({ navigation }: MainStackNavProps<'UserInfo'>) => {
                 marginTop: 15,
               }}
             >
-              ¿Por qué pedimos estos datos?
+              {i18n.t('WhyWeAsk')}
             </Text>
 
             <View
@@ -304,7 +319,7 @@ const UserInfo = ({ navigation }: MainStackNavProps<'UserInfo'>) => {
               />
               <Text style={{ marginTop: Platform.OS === 'web' ? 0 : 5 }}>
                 {' '}
-                He leído y acepto los{' '}
+                {i18n.t('ReadAndAccepted')}{' '}
                 <Text
                   onPress={() =>
                     handleOpenLink('https://cotrack.social/tyc.html')

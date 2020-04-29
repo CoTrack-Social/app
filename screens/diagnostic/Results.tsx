@@ -28,19 +28,18 @@ function PositiveResults() {
       {i18n.t('LowRisk_subtitle')}
       </Text>
       <Text style={styles.cardText}>
-      {i18n.t('LowRisk_subtitle')}
+      {i18n.t('LowRisk_text')}
       </Text>
       <RectButton
         style={[styles.button, styles.activeButton, { width: '80%' }]}
         onPress={() => navigation.navigate('Prevention')}
       >
         <Text style={[styles.buttonText, styles.activeButtonText]}>
-          Consejos para la prevención
+        {i18n.t('LowRisk_tips_title')}
         </Text>
       </RectButton>
       <Text style={styles.cardText}>
-        Si tus síntomas fueron cambiando, por favor volvé a realizar el
-        autoevaluación y seguí las recomendaciones dadas.
+      {i18n.t('LowRisk_tips_text')}
       </Text>
       <RectButton
         style={[styles.button, styles.activeButton, { width: '80%' }]}
@@ -71,12 +70,11 @@ function NeutralResults() {
         onPress={() => navigation.navigate('Prevention')}
       >
         <Text style={[styles.buttonText, styles.activeButtonText]}>
-          Consejos para la prevención
+        {i18n.t('LowRisk_tips_title')}
         </Text>
       </RectButton>
       <Text style={styles.cardText}>
-        Si tus síntomas fueron cambiando, por favor volvé a realizar el
-        autoevaluación y seguí las recomendaciones dadas.
+      {i18n.t('LowRisk_tips_text')}
       </Text>
       <RectButton
         style={[styles.button, styles.activeButton, { width: '80%' }]}
@@ -184,36 +182,6 @@ function NegativeResults({ province }) {
     </>
   );
 }
-
-// function ResultsContent({ color, title, subtitle, extraContent }) {
-//   const navigation = useNavigation();
-//   return (
-//     <>
-//       <Text style={[styles.cardTitle, { color }]}>{title}</Text>
-//       <Text style={styles.cardSubTitle}>{subtitle}</Text>
-//       {extraContent}
-//       <RectButton
-//         style={[styles.button, styles.activeButton, { width: '80%' }]}
-//         onPress={() => navigation.navigate('Prevention')}
-//       >
-//         <Text style={[styles.buttonText, styles.activeButtonText]}>
-//           Consejos para la prevención
-//         </Text>
-//       </RectButton>
-//       <Text style={styles.cardSubTitle}>
-//         {`Si tus síntomas fueron cambiando, por favor volvé a realizar el autoevaluación y seguí las recomendaciones dadas.`}
-//       </Text>
-//       <RectButton
-//         style={[styles.button, styles.activeButton, { width: '80%' }]}
-//         onPress={() => navigation.goBack()}
-//       >
-//         <Text style={[styles.buttonText, styles.activeButtonText]}>
-//           Realizar evaluación nuevamente
-//         </Text>
-//       </RectButton>
-//     </>
-//   );
-// }
 
 const CIRCLE_WIDTH = Layout.window.width * 1.6;
 

@@ -16,6 +16,7 @@ import { getHeatmapData, getHeatmapSocialData } from '../../api/services';
 import { useLocation } from '../../hooks/use-location';
 import Constants from 'expo-constants';
 import Colors from '../../constants/Colors';
+import i18n from 'i18n-js';
 
 import {
   shouldUpdateHeatMap,
@@ -232,7 +233,7 @@ export default function Map({ navigation }) {
       >
         <View style={mapStyles.modalContent}>
           <Text style={mapStyles.modalTitle}>
-            Datos {heatmapData.isSocial ? 'Comunitarios' : 'Oficiales'}
+          {heatmapData.isSocial ? i18n.t('Heatmap_issocial') : i18n.t('Heatmap_isofficial')}
           </Text>
           <Text
             style={[
@@ -241,13 +242,13 @@ export default function Map({ navigation }) {
             ]}
           >
             {heatmapData.isSocial
-              ? 'Los datos que estás viendo ahora son datos reportados colaborativamente. No son casos confirmados, sino aquellos que presentan síntomas compatibles y no fueron aun testeados.'
-              : 'Los datos que estarás viendo son datos reportados oficialmente. Las zonas de calor no indican puntos exactos de ubicación de contagiados.'}
+              ? i18n.t('Heatmap_issocial_text')
+              : i18n.t('Heatmap_isofficial_text')}
           </Text>
 
           <TouchableOpacity onPress={() => setIsVisibleModalSocial(false)}>
             <View style={mapStyles.modalButton}>
-              <Text style={{ color: 'white' }}>Aceptar</Text>
+              <Text style={{ color: 'white' }}>{i18n.t('Accept')}</Text>
             </View>
           </TouchableOpacity>
         </View>
